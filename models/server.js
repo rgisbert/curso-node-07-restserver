@@ -1,0 +1,44 @@
+const express = require('express');
+const cors = require('cors');
+
+class Server {
+  // Rutas utilizadas
+  #ownRoutes = new Map([['usuariosPath', '/api/usuarios']]);
+
+  constructor() {
+    this.app = express();
+    this.port = process.env.PORT;
+
+    // Middlewares
+    this.middlewares();
+
+    // Rutas de la aplicación
+    this.routes();
+  }
+
+  middlewares() {
+    // CORS
+    this.app.use(cors());
+
+    // Trabajar data del body
+    this.app.use(express.json()); // ? Adapta cualquier información que le llegue al formato JSON
+
+    // Directorio público
+    this.app.use(express.static('public'));
+  }
+
+  routes() {
+    this.app.use(
+      this.#ownRoutes.get('usuariosPath'),
+      require('../routes/user.js')
+    );
+  }
+
+  listen() {
+    this.app.listen(this.port, () => {
+      console.log(`Servidor levantado en http://localhost:${this.port}`);
+    });
+  }
+}
+
+module.exports = Server;
