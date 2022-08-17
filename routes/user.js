@@ -8,6 +8,7 @@ const {
   usuariosPost,
   usuariosPut,
 } = require('../controllers/user.js');
+const {validarCampos} = require('../middlewares/validar-campos.js');
 
 const router = Router();
 
@@ -20,7 +21,15 @@ router.patch('/', usuariosPatch);
 // Como segundo parámetro el middleware de express-validator
 router.post(
   '/',
-  [check('correo', 'El email no es válido').isEmail()], // Recoge el error en usuariosPost
+  [
+    check('nombre', 'El nombre es obligatorio').not().isEmpty(),
+    check('correo', 'El email no es válido').isEmail(),
+    check('password', 'El password debe tener más de 6 letras').isLength({
+      min: 6,
+    }),
+    check('rol', 'No es un rol válido').isIn(['ADMIN_ROLE', 'USER_ROLE']),
+    validarCampos, // Middleware propio para manejar la gestión de estos errores, por eso va último
+  ], // Recoge el error en usuariosPost
   usuariosPost
 );
 
