@@ -1,5 +1,7 @@
 const {request, response} = require('express');
 
+const Usuario = require('../models/usuario.js');
+
 const usuariosDelete = (req, res = response) => {
   res.json({
     msg: 'API - Delete desde el contrador',
@@ -25,14 +27,16 @@ const usuariosPatch = (req, res = response) => {
   });
 };
 
-const usuariosPost = (req = request, res = response) => {
+const usuariosPost = async (req = request, res = response) => {
   // Recoger datos del body
-  const {nombre, edad} = req.body;
+  const body = req.body;
+  const usuario = new Usuario(body); // Crea la instancia, sin grabarla
 
-  res.status(201).json({
+  await usuario.save();
+
+  res.status(200).json({
     msg: 'API - Post desde el controlador',
-    nombre,
-    edad,
+    usuario,
   });
 };
 
