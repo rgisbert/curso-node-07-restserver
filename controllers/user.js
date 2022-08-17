@@ -1,5 +1,7 @@
 const {request, response} = require('express');
 
+const bcryptjs = require('bcryptjs');
+
 const Usuario = require('../models/usuario.js');
 
 const usuariosDelete = (req, res = response) => {
@@ -29,8 +31,15 @@ const usuariosPatch = (req, res = response) => {
 
 const usuariosPost = async (req = request, res = response) => {
   // Recoger datos del body
-  const body = req.body;
-  const usuario = new Usuario(body); // Crea la instancia, sin grabarla
+  const {nombre, correo, password, rol} = req.body;
+  const usuario = new Usuario({nombre, correo, password, rol}); // Crea la instancia, sin grabarla
+
+  // Verificar si el correo existe
+
+  // Encriptar la contraseña
+  // ? genSaltSync: número de vueltas para encriptar, por defecto, en 10
+  const salt = bcryptjs.genSaltSync();
+  usuario.password = bcryptjs.hashSync(password, salt);
 
   await usuario.save();
 
