@@ -1,5 +1,5 @@
 const {request, response} = require('express');
-
+const {validationResult} = require('express-validator');
 const bcryptjs = require('bcryptjs');
 
 const Usuario = require('../models/usuario.js');
@@ -30,11 +30,23 @@ const usuariosPatch = (req, res = response) => {
 };
 
 const usuariosPost = async (req = request, res = response) => {
+  // Valor de express-validator
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json(errors);
+  }
+
   // Recoger datos del body
   const {nombre, correo, password, rol} = req.body;
   const usuario = new Usuario({nombre, correo, password, rol}); // Crea la instancia, sin grabarla
 
   // Verificar si el correo existe
+  const existeEmail = await Usuario.findOne({correo});
+  if (existeEmail) {
+    return res.status(400).json({
+      msg: `El mail ${correo} ya existe.`,
+    });
+  }
 
   // Encriptar la contraseña
   // ? genSaltSync: número de vueltas para encriptar, por defecto, en 10

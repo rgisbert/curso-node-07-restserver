@@ -1,4 +1,5 @@
 const {Router} = require('express');
+const {check} = require('express-validator');
 
 const {
   usuariosDelete,
@@ -16,7 +17,12 @@ router.get('/', usuariosGet);
 
 router.patch('/', usuariosPatch);
 
-router.post('/', usuariosPost);
+// Como segundo parámetro el middleware de express-validator
+router.post(
+  '/',
+  [check('correo', 'El email no es válido').isEmail()], // Recoge el error en usuariosPost
+  usuariosPost
+);
 
 router.put('/:id', usuariosPut); // ? Se recoge en req.params
 
