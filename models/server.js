@@ -1,6 +1,8 @@
 const express = require('express');
 const cors = require('cors');
 
+const {dbConnection} = require('../database/config.js');
+
 class Server {
   // Rutas utilizadas
   #ownRoutes = new Map([['usuariosPath', '/api/usuarios']]);
@@ -9,14 +11,21 @@ class Server {
     this.app = express();
     this.port = process.env.PORT;
 
+    // Conexion a BD
+    this.#conectarDB();
+
     // Middlewares
-    this.middlewares();
+    this.#middlewares();
 
     // Rutas de la aplicación
-    this.routes();
+    this.#routes();
   }
 
-  middlewares() {
+  async #conectarDB() {
+    await dbConnection();
+  }
+
+  #middlewares() {
     // CORS
     this.app.use(cors());
 
@@ -27,7 +36,7 @@ class Server {
     this.app.use(express.static('public'));
   }
 
-  routes() {
+  #routes() {
     this.app.use(
       this.#ownRoutes.get('usuariosPath'),
       require('../routes/user.js')
