@@ -4,7 +4,7 @@ Inicio del trabajo de desarrollo para implementar un rest server.
 
 ## Uso
 
-Iniciar con: ```npm install````
+Iniciar con: `npm install`
 
 Además, crear un archivo **.env** en base a **example.env**, dándole un valor a lo allí definido:
 
