@@ -32,4 +32,13 @@ const UsuarioSchema = Schema({
   },
 });
 
+// Sobreescribir el método para cambiar el comportamiento (No queremos que devuelva al contraseña)
+// ! Debe ser función normal (no de flecha), porque hay que trabajar con this (la instancia creada)
+UsuarioSchema.methods.toJSON = function () {
+  // Eliminar los que no queremos devolver
+  const {__v, password, ...usuario} = this.toObject();
+
+  return usuario;
+};
+
 module.exports = model('Usuario', UsuarioSchema);
