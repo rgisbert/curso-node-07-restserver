@@ -8,6 +8,7 @@ const {
   usuariosPost,
   usuariosPut,
 } = require('../controllers/user.js');
+const {esRoleValido} = require('../helpers/db-validators');
 const {validarCampos} = require('../middlewares/validar-campos.js');
 
 const router = Router();
@@ -27,7 +28,9 @@ router.post(
     check('password', 'El password debe tener más de 6 letras').isLength({
       min: 6,
     }),
-    check('rol', 'No es un rol válido').isIn(['ADMIN_ROLE', 'USER_ROLE']),
+    // * Cambio de validación en rol, ahora, contra BD
+    // check('rol', 'No es un rol válido').isIn(['ADMIN_ROLE', 'USER_ROLE']),
+    check('rol').custom(esRoleValido),
     validarCampos, // Middleware propio para manejar la gestión de estos errores, por eso va último
   ], // Recoge el error en usuariosPost
   usuariosPost
