@@ -1,7 +1,6 @@
 const {request, response} = require('express');
 const bcryptjs = require('bcryptjs');
 
-const {emailExiste} = require('../helpers/db-validators.js');
 const Usuario = require('../models/usuario.js');
 
 const usuariosDelete = (req, res = response) => {
@@ -47,13 +46,31 @@ const usuariosPost = async (req = request, res = response) => {
   });
 };
 
-const usuariosPut = (req = request, res = response) => {
-  const {id} = req.params; // ? Nombre definido en la ruta (/:id)
+const usuariosPut = async (req = request, res = response) => {
+  try {
+    const {id} = req.params; // ? Nombre definido en la ruta (/:id)
+    // ! Extraemos parámetros por seguridad, aunque no vengan, para no actualizar lo que no se debe
+    const {_id, google, password, correo, ...resto} = req.body;
 
-  res.json({
-    msg: 'API - Put desde el controlador',
-    id,
-  });
+    // TODO validar contra la BD
+
+    if (password) {
+      // Encriptar la contraseña
+      const salt = bcryptjs.genSaltSync();
+      resto.password = bcryptjs.hashSync(password, salt);
+    }
+
+    const usuario = await Usuario.findByIdAndUpdate(id, resto);
+
+    res.json({
+      msg: 'API - Put actualizado',
+      usuario,
+    });
+  } catch (error) {
+    res.status(400).json({
+      msg: 'No se pudo actualizar el usuario',
+    });
+  }
 };
 
 module.exports = {

@@ -21,7 +21,18 @@ const esRoleValido = async (rol = '') => {
   if (!existeRol) throw new Error(`El rol "${rol}" no existe en la BD.`);
 };
 
+/**
+ * Comprueba si exsite un usuario en la BD por id.
+ * @param {MongoId} id Recibe el id a comprobar en BD
+ */
+const existeUsuarioPorId = async (id) => {
+  const existeUsuario = await Usuario.findById(id);
+
+  if (!existeUsuario) throw new Error(`El id ${id} no existe.`);
+};
+
 module.exports = {
   emailExiste,
   esRoleValido,
+  existeUsuarioPorId,
 };

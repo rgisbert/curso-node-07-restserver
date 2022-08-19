@@ -8,7 +8,11 @@ const {
   usuariosPost,
   usuariosPut,
 } = require('../controllers/user.js');
-const {emailExiste, esRoleValido} = require('../helpers/db-validators');
+const {
+  emailExiste,
+  esRoleValido,
+  existeUsuarioPorId,
+} = require('../helpers/db-validators');
 const {validarCampos} = require('../middlewares/validar-campos.js');
 
 const router = Router();
@@ -37,6 +41,16 @@ router.post(
   usuariosPost
 );
 
-router.put('/:id', usuariosPut); // ? Se recoge en req.params
+router.put(
+  '/:id',
+  [
+    // También se pueden recoger los params de la ruta
+    check('id', 'No es un ID válido').isMongoId(),
+    check('id').custom(existeUsuarioPorId),
+    check('rol').custom(esRoleValido),
+    validarCampos,
+  ],
+  usuariosPut
+); // ? Se recoge en req.params
 
 module.exports = router;
