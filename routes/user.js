@@ -8,7 +8,7 @@ const {
   usuariosPost,
   usuariosPut,
 } = require('../controllers/user.js');
-const {esRoleValido} = require('../helpers/db-validators');
+const {emailExiste, esRoleValido} = require('../helpers/db-validators');
 const {validarCampos} = require('../middlewares/validar-campos.js');
 
 const router = Router();
@@ -25,6 +25,7 @@ router.post(
   [
     check('nombre', 'El nombre es obligatorio').not().isEmpty(),
     check('correo', 'El email no es válido').isEmail(),
+    check('correo', 'El email ya está registrado').custom(emailExiste),
     check('password', 'El password debe tener más de 6 letras').isLength({
       min: 6,
     }),

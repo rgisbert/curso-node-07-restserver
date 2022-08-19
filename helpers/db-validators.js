@@ -1,4 +1,15 @@
 const Role = require('../models/role.js');
+const Usuario = require('../models/usuario.js');
+
+/**
+ * Comprueba si el correo ya existe en la BD
+ * @param {String} correo Mail a comprobarr
+ */
+const emailExiste = async (correo) => {
+  const existeEmail = await Usuario.findOne({correo});
+
+  if (existeEmail) throw new Error(`El mail ${correo} ya existe.`);
+};
 
 /**
  * Comprueba el si role que se quiere asignar a un usuario existe en la BD.
@@ -11,5 +22,6 @@ const esRoleValido = async (rol = '') => {
 };
 
 module.exports = {
+  emailExiste,
   esRoleValido,
 };
