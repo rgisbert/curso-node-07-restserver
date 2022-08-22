@@ -3,9 +3,17 @@ const bcryptjs = require('bcryptjs');
 
 const Usuario = require('../models/usuario.js');
 
-const usuariosDelete = (req, res = response) => {
+const usuariosDelete = async (req = request, res = response) => {
+  const {id} = req.params;
+
+  // ! Así sería el borrado físico de la BD
+  // const usuario = await Usuario.findByIdAndDelete(id);
+
+  // "Borrado" marcando el estado en false
+  const usuario = await Usuario.findByIdAndUpdate(id, {estado: false});
+
   res.json({
-    msg: 'API - Delete desde el contrador',
+    usuario,
   });
 };
 
