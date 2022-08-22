@@ -9,16 +9,21 @@ const usuariosDelete = (req, res = response) => {
   });
 };
 
-const usuariosGet = (req = request, res = response) => {
-  const {q, nombre = 'Sin nombre', apikey, page = 1, limit = 10} = req.query; // ? Los enviados a través de URL ?q=hola&nombre=fernando&apikey=1234567890
+const usuariosGet = async (req = request, res = response) => {
+  // ? Los enviados a través de URL ?q=hola&nombre=fernando&apikey=1234567890
+  const {desde = 0, limite = 5} = req.query;
+  const query = {estado: true};
+
+  // ? Con Promise.all más optimizado, simplemente bloquea la BD una vez y es más rápido (mitad de tiempo aprox.)
+  // * De hacer las promesas por separado, accedería con la primera y al acabar, accedería la segunda
+  const [usuarios, totalUsuarios] = await Promise.all([
+    Usuario.find(query).skip(Number(desde)).limit(Number(limite)),
+    Usuario.countDocuments(query),
+  ]);
 
   res.json({
-    msg: 'API - Get desde el controlador',
-    q,
-    nombre,
-    apikey,
-    page,
-    limit,
+    totalUsuarios,
+    usuarios,
   });
 };
 
