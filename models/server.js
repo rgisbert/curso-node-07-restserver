@@ -5,7 +5,10 @@ const {dbConnection} = require('../database/config.js');
 
 class Server {
   // Rutas utilizadas
-  #ownRoutes = new Map([['usuariosPath', '/api/usuarios']]);
+  #ownRoutes = new Map([
+    ['authPath', '/api/auth'],
+    ['usuariosPath', '/api/usuarios'],
+  ]);
 
   constructor() {
     this.app = express();
@@ -37,6 +40,7 @@ class Server {
   }
 
   #routes() {
+    this.app.use(this.#ownRoutes.get('authPath'), require('../routes/auth.js'));
     this.app.use(
       this.#ownRoutes.get('usuariosPath'),
       require('../routes/user.js')
