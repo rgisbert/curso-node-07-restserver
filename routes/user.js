@@ -14,12 +14,16 @@ const {
   existeUsuarioPorId,
 } = require('../helpers/db-validators');
 const {validarCampos} = require('../middlewares/validar-campos.js');
+const {validarJWT} = require('../middlewares/validar-jwt.js');
+const {tieneRole} = require('../middlewares/validar-roles.js');
 
 const router = Router();
 
 router.delete(
   '/:id',
   [
+    validarJWT,
+    tieneRole('ADMIN_ROLE', 'VENTAS_ROLE'),
     check('id', 'No es un id válido').isMongoId(),
     check('id').custom(existeUsuarioPorId),
     validarCampos,
