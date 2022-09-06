@@ -1,8 +1,8 @@
 const {Router} = require('express');
 const {check} = require('express-validator');
 
-const {} = require('../controllers/categorias.js');
-const {validarCampos} = require('../middlewares/validar-campos.js');
+const {crearCategoria} = require('../controllers/categorias.js');
+const {validarCampos, validarJWT} = require('../middlewares/index.js');
 
 const router = Router();
 
@@ -47,12 +47,15 @@ router.get('/:id', (req, res) => {
  * Permiso: estar logueado (independientemente del rol en bD)
  * @params {Categoria} Objeto a crear (req.body)
  */
-router.post('/', (req, res) => {
-  res.json({
-    msg: 'POST Categoría',
-    [req.body]: req.body,
-  });
-});
+router.post(
+  '/',
+  [
+    validarJWT,
+    check('nombre', 'El nombre es obligatorio').not().isEmpty(),
+    validarCampos,
+  ],
+  crearCategoria
+);
 
 /**
  * Actualizar la categoría del id facilitado
