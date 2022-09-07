@@ -8,7 +8,8 @@ class Server {
   #ownRoutes = new Map([
     ['authPath', '/api/auth'],
     ['categoriasPath', '/api/categorias'],
-    ['productosPath', '/api/productos'][('usuariosPath', '/api/usuarios')],
+    ['productosPath', '/api/productos'],
+    ['usuariosPath', '/api/usuarios'],
   ]);
 
   constructor() {
