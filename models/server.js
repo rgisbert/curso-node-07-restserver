@@ -8,7 +8,7 @@ class Server {
   #ownRoutes = new Map([
     ['authPath', '/api/auth'],
     ['categoriasPath', '/api/categorias'],
-    ['usuariosPath', '/api/usuarios'],
+    ['productosPath', '/api/productos'][('usuariosPath', '/api/usuarios')],
   ]);
 
   constructor() {
@@ -42,10 +42,17 @@ class Server {
 
   #routes() {
     this.app.use(this.#ownRoutes.get('authPath'), require('../routes/auth.js'));
+
     this.app.use(
       this.#ownRoutes.get('categoriasPath'),
       require('../routes/categorias.js')
     );
+
+    this.app.use(
+      this.#ownRoutes.get('productosPath'),
+      require('../routes/productos.js')
+    );
+
     this.app.use(
       this.#ownRoutes.get('usuariosPath'),
       require('../routes/user.js')
