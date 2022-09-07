@@ -1,8 +1,21 @@
 const {Router} = require('express');
 const {check} = require('express-validator');
 
-const {crearCategoria} = require('../controllers/categorias.js');
-const {validarCampos, validarJWT} = require('../middlewares/index.js');
+const {
+  actualizarCategoria,
+  borrarCategoria,
+  crearCategoria,
+  obtenerCategoria,
+  obtenerCategorias,
+} = require('../controllers/categorias.js');
+
+const {categoriaExiste} = require('../helpers/db-validators.js');
+
+const {
+  esAdminRole,
+  validarCampos,
+  validarJWT,
+} = require('../middlewares/index.js');
 
 const router = Router();
 
@@ -12,34 +25,38 @@ const router = Router();
  * Permiso: sólo personas con ADMIN_ROLE
  * @params {ObjectId} id - identificador de la categoría a borrar (rq.params)
  */
-router.delete('/:id', (req, res) => {
-  res.json({
-    msg: 'DELETE por ID',
-    id: req.params.id,
-  });
-});
-
-/**
- * Obtener todas las categorías
- * Servicio: público
- */
-router.get('/', (req, res) => {
-  res.json({
-    msg: 'GET',
-  });
-});
+router.delete(
+  '/:id',
+  [
+    validarJWT,
+    esAdminRole,
+    check('id', 'No es un ID válido.').isMongoId(),
+    check('id').custom(categoriaExiste),
+    validarCampos,
+  ],
+  borrarCategoria
+);
 
 /**
  * Obtener una categoría dada por id
  * Servicio: público
  * @param {ObjectId} id - identificador de la ruta (req.params)
  */
-router.get('/:id', (req, res) => {
-  res.json({
-    msg: 'GET por iD',
-    id: req.params.id,
-  });
-});
+router.get(
+  '/:id',
+  [
+    check('id', 'No es un ID válido.').isMongoId(),
+    check('id').custom(categoriaExiste),
+    validarCampos,
+  ],
+  obtenerCategoria
+);
+
+/**
+ * Obtener un listado de categorías, paginado. Además del total de categorías
+ * Servicio: público
+ */
+router.get('/', obtenerCategorias);
 
 /**
  * Crear categoría.
@@ -63,11 +80,16 @@ router.post(
  * Permiso: estar logueado (independientemente del rol en bD)
  * @param {ObjectId} id - identificador de la ruta (req.params)
  */
-router.put('/:id', (req, res) => {
-  res.json({
-    msg: 'PUT por iD',
-    id: req.params.id,
-  });
-});
+router.put(
+  '/:id',
+  [
+    validarJWT,
+    check('id', 'No es un ID válido.').isMongoId(),
+    check('id').custom(categoriaExiste),
+    check('nombre', 'El nombre es obligatorio').not().isEmpty(),
+    validarCampos,
+  ],
+  actualizarCategoria
+);
 
 module.exports = router;
