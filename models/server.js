@@ -7,6 +7,7 @@ class Server {
   // Rutas utilizadas
   #ownRoutes = new Map([
     ['authPath', '/api/auth'],
+    ['buscarPath', '/api/buscar'],
     ['categoriasPath', '/api/categorias'],
     ['productosPath', '/api/productos'],
     ['usuariosPath', '/api/usuarios'],
@@ -43,6 +44,11 @@ class Server {
 
   #routes() {
     this.app.use(this.#ownRoutes.get('authPath'), require('../routes/auth.js'));
+
+    this.app.use(
+      this.#ownRoutes.get('buscarPath'),
+      require('../routes/buscar.js')
+    );
 
     this.app.use(
       this.#ownRoutes.get('categoriasPath'),
