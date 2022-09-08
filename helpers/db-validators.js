@@ -1,4 +1,4 @@
-const {Categoria, Role, Usuario} = require('../models/index.js');
+const {Categoria, Producto, Role, Usuario} = require('../models/index.js');
 
 /**
  * Comprueba si existe categoría con el id facilitado.
@@ -40,9 +40,31 @@ const existeUsuarioPorId = async (id) => {
   if (!existeUsuario) throw new Error(`El id ${id} no existe.`);
 };
 
+/**
+ * Verificar que el nombre de Producto no exista en la colección
+ * @param {String} nombre - Nombre del producto a guardar en la BD que debe ser único
+ */
+const nombreProductoUnico = async (nombre) => {
+  const productoExiste = await Producto.findOne({nombre});
+
+  if (productoExiste) throw new Error(`Ya existe el producto "${nombre}".`);
+};
+
+/**
+ * Verificar si existe el Producto con el id facilitado
+ * @param {ObjectId} id - Id del producto a consultar
+ */
+const productoExistePorId = async (id) => {
+  const existeProducto = await Producto.findById(id);
+
+  if (!existeProducto) throw new Error(`No existe el producto con id ${id}.`);
+};
+
 module.exports = {
   categoriaExiste,
   emailExiste,
   esRoleValido,
   existeUsuarioPorId,
+  nombreProductoUnico,
+  productoExistePorId,
 };
