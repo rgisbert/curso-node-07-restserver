@@ -1,4 +1,6 @@
+const fs = require('fs');
 const path = require('path');
+const {v4: uuidv4} = require('uuid');
 
 const cargarArchivo = (req, res) => {
   // Validaciones
@@ -11,7 +13,6 @@ const cargarArchivo = (req, res) => {
   // Obtener archivo y ruta
   const {archivo} = req.files;
   const extensionArchivo = archivo.name.split('.').at(-1);
-  const uploadPath = path.join(__dirname, '../uploads/', archivo.name);
 
   // Extensiones admitidas
   const extensionesValidas = ['gif', 'jpg', 'jpeg', 'png'];
@@ -23,12 +24,25 @@ const cargarArchivo = (req, res) => {
     });
   }
 
-  // // Mover el archivo a la carpeta del servidor
-  // archivo.mv(uploadPath, (err) => {
-  //   if (err) return res.status(500).json({err});
+  let fileExists;
+  let nombreRandom;
+  let uploadPath;
 
-  //   res.json({msg: `Archivo subido a: "${uploadPath}"`});
-  // });
+  // Si la extensión es válida, cambiar archivo
+  // En el poco probable caso que ya exista, generar otro
+  do {
+    nombreRandom = `${uuidv4()}.${extensionArchivo}`;
+    uploadPath = path.join(__dirname, '../uploads/', nombreRandom);
+
+    fileExists = fs.existsSync(uploadPath);
+  } while (fileExists);
+
+  // Mover el archivo a la carpeta del servidor
+  archivo.mv(uploadPath, (err) => {
+    if (err) return res.status(500).json({err});
+
+    res.json({msg: `Archivo subido a: "${uploadPath}"`});
+  });
 };
 
 module.exports = {
