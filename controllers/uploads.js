@@ -10,14 +10,25 @@ const cargarArchivo = (req, res) => {
 
   // Obtener archivo y ruta
   const {archivo} = req.files;
+  const extensionArchivo = archivo.name.split('.').at(-1);
   const uploadPath = path.join(__dirname, '../uploads/', archivo.name);
 
-  // Mover el archivo a la carpeta del servidor
-  archivo.mv(uploadPath, (err) => {
-    if (err) return res.status(500).json({err});
+  // Extensiones admitidas
+  const extensionesValidas = ['gif', 'jpg', 'jpeg', 'png'];
 
-    res.json({msg: `Archivo subido a: "${uploadPath}"`});
-  });
+  if (!extensionesValidas.includes(extensionArchivo)) {
+    return res.status(400).json({
+      msg: `La extensión ${extensionArchivo} no se permite.`,
+      extensionesValidas,
+    });
+  }
+
+  // // Mover el archivo a la carpeta del servidor
+  // archivo.mv(uploadPath, (err) => {
+  //   if (err) return res.status(500).json({err});
+
+  //   res.json({msg: `Archivo subido a: "${uploadPath}"`});
+  // });
 };
 
 module.exports = {
