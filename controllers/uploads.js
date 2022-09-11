@@ -78,7 +78,63 @@ const cargarArchivo = (req, res) => {
     .catch((err) => res.status(500).json({err}));
 };
 
+/**
+ * Devuelve la ruta de uma imagen solicitada
+ */
+const mostrarImagen = async (req, res) => {
+  try {
+    const {coleccion, id} = req.params;
+
+    let modelo;
+
+    switch (coleccion) {
+      case 'usuario':
+        modelo = await Usuario.findById(id);
+        break;
+
+      case 'producto':
+        modelo = await Producto.findById(id);
+        break;
+
+      default:
+        return res
+          .status(500)
+          .json({msg: `Colección ${coleccion} sin registrar.`});
+    }
+
+    // Comprobar que tenga datos
+    if (!modelo) {
+      return res
+        .status(404)
+        .json({msg: `No se ha encontrado en id ${id} en ${coleccion}`});
+    }
+
+    if (modelo.img) {
+      const pathImagen = path.join(
+        __dirname,
+        '../uploads/',
+        coleccion,
+        modelo.img
+      );
+
+      if (fs.existsSync(pathImagen)) {
+        // ! No devuelve json, sino archivo
+        return res.sendFile(pathImagen);
+      }
+    }
+
+    // Si el id no tiene imagen asociada, devuelve imagen predefinida
+    return res.sendFile(path.join(__dirname, '../assets/no-image.jpg'));
+  } catch (error) {
+    return res.status(500).json({
+      msg: `Error al devolver la imagen la imagen.`,
+      error,
+    });
+  }
+};
+
 module.exports = {
   actualizarImagen,
   cargarArchivo,
+  mostrarImagen,
 };

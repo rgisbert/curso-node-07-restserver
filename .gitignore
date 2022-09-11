@@ -11,3 +11,5 @@ docs/
 
 *.pdf
 *.txt
+
+!assets/*.*
