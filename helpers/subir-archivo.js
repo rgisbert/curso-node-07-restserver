@@ -45,7 +45,10 @@ const subirArchivo = (
     archivo.mv(uploadPath, (err) => {
       if (err) return reject(err);
 
-      resolve(uploadPath);
+      resolve({
+        uploadPath,
+        nombreArchivo: nombreRandom,
+      });
     });
   });
 };

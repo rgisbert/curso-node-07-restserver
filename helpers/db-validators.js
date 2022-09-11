@@ -11,6 +11,24 @@ const categoriaExiste = async (id) => {
 };
 
 /**
+ * Comprobar si una cadena de texto está entre las permitidas.
+ * @param { String } coleccion - Nombre de la colección a validar
+ * @param { String[] } opcsPermitidas - Las opciones contra las que validarlas
+ * @return { Boolean } Si colección está entre las opciones permitidas, devuelve true.
+ */
+const coleccionPermitida = (coleccion, opcsPermitidas) => {
+  const incluida = opcsPermitidas.includes(coleccion);
+
+  if (!incluida) {
+    throw new Error(
+      `La coleccion ${coleccion} no es permitida. Permitidas: ${opcsPermitidas}.`
+    );
+  }
+
+  return true;
+};
+
+/**
  * Comprueba si el correo ya existe en la BD
  * @param {String} correo Mail a comprobarr
  */
@@ -62,6 +80,7 @@ const productoExistePorId = async (id) => {
 
 module.exports = {
   categoriaExiste,
+  coleccionPermitida,
   emailExiste,
   esRoleValido,
   existeUsuarioPorId,

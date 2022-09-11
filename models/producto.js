@@ -33,6 +33,7 @@ const ProductoSchema = Schema({
     ref: 'Categoria',
     required: true,
   },
+  img: {type: String},
 });
 
 // Extraer las propiedades que no quiero mostrar, se aplica a todas las peticiones
